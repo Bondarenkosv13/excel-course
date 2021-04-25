@@ -13,6 +13,17 @@ class Dom {
     return this.$el.outerHTML.trim()
   }
 
+  text(text) {
+    if (typeof text !== 'undefined') {
+      this.$el.textContent = text
+      return this
+    }
+    if (this.$el.tagName.toLowerCase() === 'input') {
+      return this.$el.value.trim()
+    }
+    return this.$el.textContent.trim()
+  }
+
   clear() {
     this.html('')
     return this
@@ -24,6 +35,10 @@ class Dom {
 
   off(eventType, callback) {
     this.$el.removeEventListener(eventType, callback)
+  }
+
+  find(selector) {
+    return $(this.$el.querySelector(selector))
   }
 
   append(node) {
@@ -52,28 +67,23 @@ class Dom {
     return this.$el.getBoundingClientRect()
   }
 
-  find(selector) {
-    return $(this.$el.querySelector(selector))
-  }
-
   findAll(selector) {
     return this.$el.querySelectorAll(selector)
   }
 
   css(styles = {}) {
-    Object.keys((styles)).forEach(key => {
-      this.$el.style[key] = styles[key]
-    })
+    Object
+        .keys(styles)
+        .forEach(key => {
+          this.$el.style[key] = styles[key]
+        })
   }
 
-  addClass(className) {
-    this.$el.classList.add(className)
-    return this
-  }
-
-  removeClass(className) {
-    this.$el.classList.remove(className)
-    return this
+  getStyles(styles = []) {
+    return styles.reduce((res, s) => {
+      res[s] = this.$el.style[s]
+      return res
+    }, {})
   }
 
   id(parse) {
@@ -92,15 +102,22 @@ class Dom {
     return this
   }
 
-  text(text) {
-    if (typeof text === 'string') {
-      this.$el.textContent = text
+  attr(name, value) {
+    if (value) {
+      this.$el.setAttribute(name, value)
       return this
     }
-    if (this.$el.tagName.toLowerCase() === 'input') {
-      return this.$el.value.trim()
-    }
-    return this.$el.textContent.trim()
+    return this.$el.getAttribute(name)
+  }
+
+  addClass(className) {
+    this.$el.classList.add(className)
+    return this
+  }
+
+  removeClass(className) {
+    this.$el.classList.remove(className)
+    return this
   }
 }
 
